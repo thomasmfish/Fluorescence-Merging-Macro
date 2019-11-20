@@ -4,3 +4,5 @@ This is an ImageJ Macro for combining fluorescence and brightfield images, built
 
 To install or modify, please follow instructions here:
 https://imagej.nih.gov/ij/developer/macro/macros.html
+
+Copyright (c) 2019 Diamond Light Source Ltd. All rights reserved. Licensed under a permissive BSD-3 license.
