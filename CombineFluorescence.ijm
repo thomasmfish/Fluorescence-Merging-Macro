@@ -67,7 +67,7 @@ cyanMax = Dialog.getNumber();
 keepSeparate = Dialog.getCheckbox();
 
 // Checks at least two have been selected
-if (hasBrightfield + hasRed + hasGreen < 2) {
+if (hasBrightfield + hasRed + hasGreen + hasCyan < 2) {
 	exit("A minimum of two channels must be selected");
 };
 
