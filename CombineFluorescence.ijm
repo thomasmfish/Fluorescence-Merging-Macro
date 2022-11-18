@@ -22,7 +22,7 @@ Dialog.addCheckbox("Red", false);
 Dialog.addCheckbox("FarRed", false);
 
 // Green options:
-Dialog.addCheckbox("Green", true);
+Dialog.addCheckbox("Green", false);
 
 // Cyan options:
 Dialog.addCheckbox("Cyan", false);
