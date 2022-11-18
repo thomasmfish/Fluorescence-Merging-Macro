@@ -72,7 +72,10 @@ if (hasBrightfield) {
 	Dialog.show();
 	bfPath = File.openDialog("Select Brightfield File");
 	open(bfPath);
-	channelSelect();
+	getDimensions(w, h, numChannels, s, f);
+	widths=Array.concat(widths, w);
+	heights=Array.concat(heights, h);
+	channelSelect(numChannels);
 	run("8-bit");
 	if (thresholdBrighfield) {
 		setAutoThreshold("Huang dark");
@@ -82,7 +85,8 @@ if (hasBrightfield) {
 			setMinAndMax(0, 510);
 		};
 	};
-	updateName("BF");
+	imageName = updateName("BF");
+	imageNames = Array.concat(imageNames, imageName);
 };
 if (hasRed) {
 	Dialog.create("Red");
@@ -90,8 +94,12 @@ if (hasRed) {
 	Dialog.show();
 	redPath = File.openDialog("Select Red Channel File");
 	open(redPath);
-	channelSelect();
-	processImage("Red");
+	getDimensions(w, h, numChannels, s, f);
+	widths=Array.concat(widths, w);
+	heights=Array.concat(heights, h);
+	channelSelect(numChannels);
+	imageName = processImage("Red");
+	imageNames = Array.concat(imageNames, imageName);
 };
 if (hasFarRed) {
 	Dialog.create("FarRed");
@@ -99,8 +107,12 @@ if (hasFarRed) {
 	Dialog.show();
 	farRedPath = File.openDialog("Select FarRed Channel File");
 	open(farRedPath);
-	channelSelect();
-	processImage("FarRed");
+	getDimensions(w, h, numChannels, s, f);
+	widths=Array.concat(widths, w);
+	heights=Array.concat(heights, h);
+	channelSelect(numChannels);
+	imageName = processImage("FarRed");
+	imageNames = Array.concat(imageNames, imageName);
 };
 if (hasGreen) {
 	Dialog.create("Green");
@@ -108,8 +120,12 @@ if (hasGreen) {
 	Dialog.show();
 	greenPath = File.openDialog("Select Green Channel File");
 	open(greenPath);
-	channelSelect();
-	processImage("Green");
+	getDimensions(w, h, numChannels, s, f);
+	widths=Array.concat(widths, w);
+	heights=Array.concat(heights, h);
+	channelSelect(numChannels);
+	imageName = processImage("Green");
+	imageNames = Array.concat(imageNames, imageName);
 };
 if (hasCyan) {
 	Dialog.create("Cyan");
@@ -117,40 +133,46 @@ if (hasCyan) {
 	Dialog.show();
 	cyanPath = File.openDialog("Select Cyan Channel File");
 	open(cyanPath);
-	channelSelect();
-	processImage("Cyan");
+	getDimensions(w, h, numChannels, s, f);
+	widths=Array.concat(widths, w);
+	heights=Array.concat(heights, h);
+	channelSelect(numChannels);
+	imageName = processImage("Cyan");
+	imageNames = Array.concat(imageNames, imageName);
 };
 
 function updateName(colour) {
 	name=colour + timeString;
-	imageNames = Array.concat(imageNames, name);
 	rename(name);
+	return name;
 }
 
 function processImage(colour) {
+	setOption("Changes", false);
+	rename("tmp");
 	if (zProject) {
 		run("Z Project...", "projection=[Max Intensity]");
 	};
+	close("tmp");
 	run("Enhance Contrast", "saturation=0.35");
+	setOption("Changes", false);
 	run("8-bit");
 	run("Apply LUT");
-	updateName(colour);
+	setOption("Changes", true);
+	newName = updateName(colour);
+	return newName;
 }
 
-
-function channelSelect() {
-	temp_name="tmp";
-	rename(temp_name);
-	getDimensions(w, h, c, s, f);
-	widths=Array.concat(widths, w);
-	heights=Array.concat(heights, h);
-	if (c > 1) {
+function channelSelect(numChannels) {
+	if (numChannels > 1) {
+		temp_name="tmp";
+		rename(temp_name);
 		a = newArray();
-		for (i=1; i<=c; i++) {
+		for (i=1; i<=numChannels; i++) {
 			a=Array.concat(a, "C" + i);
 		};
 		Dialog.create("Select channel");
-		Dialog.addRadioButtonGroup("Channel", a, c, 0, a[0]);
+		Dialog.addRadioButtonGroup("Channel", a, numChannels, 0, a[0]);
 		Dialog.show();
 		selected_c=Dialog.getRadioButton();
 		a=Array.deleteValue(a, selected_c);
@@ -183,11 +205,16 @@ if (hasGreen) {
 if (hasCyan) {
 	channelMergeString = channelMergeString + "c5=Cyan" + timeString + " ";
 };
-
-widestImage = Array.reverse(Array.rankPositions(widths))[0];
+print("widths");
+Array.print(widths);
+widthIdxs=Array.rankPositions(widths);
+Array.print(widthIdxs);
+widthIdxs = Array.reverse(widthIdxs);
+Array.print(widthIdxs);
+widestImage = widthIdxs[0];
 for (i=0; i<imageNames.length; i++) {
-	selectWindow(imageNames[i])
-	run("Size...", "width=widths[widestImage] height=heights[widestImage] average interpolation=Bilinear");
+	selectWindow(imageNames[i]);
+	run("Size...", "width=" + widths[widestImage] + " height=" + heights[widestImage] + " average interpolation=Bilinear");
 };
 
 if (keepSeparate) {
