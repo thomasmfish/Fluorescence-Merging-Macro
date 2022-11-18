@@ -137,7 +137,7 @@ function processImage(colour) {
 	run("Enhance Contrast", "saturation=0.35");
 	run("8-bit");
 	run("Apply LUT");
-	updateName(name);
+	updateName(colour);
 }
 
 
