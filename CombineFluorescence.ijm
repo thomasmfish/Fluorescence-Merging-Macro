@@ -30,6 +30,8 @@ Dialog.addCheckbox("Cyan", false);
 // Give an option to keep separate copies of the processed images:
 Dialog.addMessage("");
 Dialog.addCheckbox("Keep the separate processed images open when merging", false);
+Dialog.addMessage("");
+Dialog.addCheckbox("Z-project maximum intensity", true);
 
 Dialog.show();
 
@@ -44,22 +46,20 @@ thresholdBrighfield = Dialog.getCheckbox();
 transparentBrighfield = Dialog.getCheckbox();
 
 hasRed = Dialog.getCheckbox();
-redMin = Dialog.getNumber();
-redMax = Dialog.getNumber();
 
 hasFarRed = Dialog.getCheckbox();
-farRedMin = Dialog.getNumber();
-farRedMax = Dialog.getNumber();
 
 hasGreen = Dialog.getCheckbox();
-greenMin = Dialog.getNumber();
-greenMax = Dialog.getNumber();
 
 hasCyan = Dialog.getCheckbox();
-cyanMin = Dialog.getNumber();
-cyanMax = Dialog.getNumber();
 
 keepSeparate = Dialog.getCheckbox();
+
+zProject = Dialog.getCheckbox();
+
+imageNames=newArray();
+widths=newArray();
+heights=newArray();
 
 // Checks at least two have been selected
 if (hasBrightfield + hasRed + hasFarRed + hasGreen + hasCyan < 2) {
@@ -91,8 +91,8 @@ if (hasRed) {
 	redPath = File.openDialog("Select Red Channel File");
 	open(redPath);
 	channelSelect();
-	processImage();
-	rename("Red" + timeString);
+	processImage("Red");
+	rename( + timeString);
 };
 if (hasFarRed) {
 	Dialog.create("FarRed");
@@ -101,8 +101,8 @@ if (hasFarRed) {
 	farRedPath = File.openDialog("Select FarRed Channel File");
 	open(farRedPath);
 	channelSelect();
-	processImage();
-	rename("FarRed" + timeString);
+	processImage("FarRed");
+	rename( + timeString);
 };
 if (hasGreen) {
 	Dialog.create("Green");
@@ -111,8 +111,8 @@ if (hasGreen) {
 	greenPath = File.openDialog("Select Green Channel File");
 	open(greenPath);
 	channelSelect();
-	processImage();
-	rename("Green" + timeString);
+	processImage("Green");
+	rename( + timeString);
 };
 if (hasCyan) {
 	Dialog.create("Cyan");
@@ -121,20 +121,31 @@ if (hasCyan) {
 	cyanPath = File.openDialog("Select Cyan Channel File");
 	open(cyanPath);
 	channelSelect();
-	processImage();
-	rename("Cyan" + timeString);
+	processImage("Cyan");
 };
 
-function processImage() {
+function processImage(colour) {
+	if (zProject) {
+		run("Z Project...", "projection=[Max Intensity]");
+	};
 	run("Enhance Contrast", "saturation=0.35");
 	run("8-bit");
 	run("Apply LUT");
-	}
+	updateName(name);
+}
+
+function updateName(colour) {
+	name=colour + timeString;
+	imageNames = Array.concat(imageNames, name);
+	rename(name);
+}
 
 function channelSelect() {
 	temp_name="tmp";
 	rename(temp_name);
 	getDimensions(w, h, c, s, f);
+	widths=Array.concat(widths, w);
+	heights=Array.concat(heights, h);
 	if (c > 1) {
 		a = newArray();
 		for (i=1; i<=c; i++) {
@@ -173,6 +184,12 @@ if (hasGreen) {
 
 if (hasCyan) {
 	channelMergeString = channelMergeString + "c5=Cyan" + timeString + " ";
+};
+
+widestImage = Array.reverse(Array.rankPositions(widths))[0];
+for (i=0; i<imageNames.length; i++) {
+	selectWindow(imageNames[i])
+	run("Size...", "width=widths[widestImage] height=heights[widestImage] average interpolation=Bilinear");
 };
 
 if (keepSeparate) {
