@@ -127,8 +127,8 @@ if (hasCyan) {
 
 function processImage() {
 	run("Enhance Contrast", "saturation=0.35");
-	run("Apply LUT");
 	run("8-bit");
+	run("Apply LUT");
 	}
 
 function channelSelect() {
