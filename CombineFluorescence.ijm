@@ -124,6 +124,12 @@ if (hasCyan) {
 	processImage("Cyan");
 };
 
+function updateName(colour) {
+	name=colour + timeString;
+	imageNames = Array.concat(imageNames, name);
+	rename(name);
+}
+
 function processImage(colour) {
 	if (zProject) {
 		run("Z Project...", "projection=[Max Intensity]");
@@ -134,11 +140,6 @@ function processImage(colour) {
 	updateName(name);
 }
 
-function updateName(colour) {
-	name=colour + timeString;
-	imageNames = Array.concat(imageNames, name);
-	rename(name);
-}
 
 function channelSelect() {
 	temp_name="tmp";
