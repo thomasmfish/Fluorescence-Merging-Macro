@@ -82,7 +82,7 @@ if (hasBrightfield) {
 			setMinAndMax(0, 510);
 		};
 	};
-	rename("BF" + timeString);
+	updateName("BF");
 };
 if (hasRed) {
 	Dialog.create("Red");
@@ -92,7 +92,6 @@ if (hasRed) {
 	open(redPath);
 	channelSelect();
 	processImage("Red");
-	rename( + timeString);
 };
 if (hasFarRed) {
 	Dialog.create("FarRed");
@@ -102,7 +101,6 @@ if (hasFarRed) {
 	open(farRedPath);
 	channelSelect();
 	processImage("FarRed");
-	rename( + timeString);
 };
 if (hasGreen) {
 	Dialog.create("Green");
@@ -112,7 +110,6 @@ if (hasGreen) {
 	open(greenPath);
 	channelSelect();
 	processImage("Green");
-	rename( + timeString);
 };
 if (hasCyan) {
 	Dialog.create("Cyan");
